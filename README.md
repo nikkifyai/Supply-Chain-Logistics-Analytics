@@ -1,428 +1,230 @@
-# 🚚 Supply Chain & Logistics Analytics
+# Supply Chain & Logistics Analytics
 
-### End-to-End Data Engineering and Business Intelligence Project using Databricks, Apache Spark, Delta Lake and Power BI
+### End-to-End Data Engineering and Business Intelligence using Databricks, Apache Spark, Delta Lake and Power BI
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Apache Spark](https://img.shields.io/badge/Apache%20Spark-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white)
 ![Databricks](https://img.shields.io/badge/Databricks-FF3621?style=for-the-badge&logo=databricks&logoColor=white)
-![Delta Lake](https://img.shields.io/badge/Delta%20Lake-003366?style=for-the-badge)
 ![Power BI](https://img.shields.io/badge/Power%20BI-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
 
----
+## 1. Project Overview
 
-## 📌 1. Project Overview
+Supply Chain & Logistics Analytics is an end-to-end data engineering and business intelligence project. It processes the DataCo Supply Chain Dataset using Databricks, Apache Spark, PySpark and Delta Lake, then presents business-oriented insights through Microsoft Power BI.
 
-Supply Chain & Logistics Analytics is an end-to-end data engineering and business intelligence project designed to analyse supply chain operations, delivery performance, regional sales and shipping efficiency.
+The pipeline follows the Medallion Architecture: Bronze for raw ingestion, Silver for cleaning and transformation, and Gold for analytical datasets.
 
-The project uses the **DataCo Supply Chain Dataset**, containing approximately 180,519 records, to build a structured data processing pipeline using Apache Spark and Databricks.
+## 2. Problem Statement
 
-The data is processed through the Medallion Architecture, consisting of Bronze, Silver and Gold layers. The transformed data is then used to generate business analytics and interactive visualizations in Microsoft Power BI.
+Supply chain operations generate data about orders, products, sales, shipments, delivery status and geography. Raw operational data is difficult to use directly for consistent business analysis. This project builds a repeatable data pipeline to prepare the data and produce insights into sales, profitability, delivery performance, regional trends and shipping modes.
 
-The primary objective is to transform raw supply chain data into meaningful business insights that can help organizations understand operational performance and identify areas for improvement.
+## 3. Objectives
 
-## 🎯 2. Problem Statement
+- Ingest and store the raw supply chain dataset in Databricks.
+- Implement Bronze, Silver and Gold data layers.
+- Clean and transform records using PySpark.
+- Generate reusable analytical Gold tables.
+- Orchestrate processing through Databricks Workflows.
+- Connect Databricks SQL to Power BI using DirectQuery.
+- Build an interactive supply chain analytics dashboard.
 
-Supply chain organizations generate large volumes of operational data related to customer orders, product sales, shipments, delivery performance and regional distribution.
+## 4. Dataset
 
-However, analysing this data efficiently is challenging because of data quality issues, fragmented information and the difficulty of identifying operational bottlenecks.
+- **Dataset:** DataCo Supply Chain Dataset
+- **Format:** CSV
+- **Reported records:** 180,519
+- **Raw storage:** `workspace.default.logistics_raw`
+- **Bronze:** 180,519 rows and 53 columns
+- **Silver:** 180,519 rows and 46 columns
 
-This project addresses these challenges by developing an end-to-end data engineering pipeline that:
+The dataset includes order, sales, profit, delivery, shipping mode and geographic information. Add the verified original dataset URL and license details before public distribution.
 
-- Processes large-scale supply chain datasets.
-- Cleans and transforms raw operational data.
-- Organizes data using Medallion Architecture.
-- Generates analytical datasets for business reporting.
-- Evaluates delivery performance and shipping efficiency.
-- Provides interactive business intelligence dashboards.
+## 5. Architecture
 
-## 🎯 3. Project Objectives
-
-1. Build an end-to-end data engineering pipeline using Databricks.
-2. Implement Bronze, Silver and Gold data layers.
-3. Perform data cleaning and transformation using PySpark.
-4. Store and process data using Delta Lake.
-5. Generate business-oriented analytical datasets.
-6. Analyse sales, profit, delivery and shipping performance.
-7. Integrate Databricks with Microsoft Power BI.
-8. Develop an interactive dashboard for business analysis.
-
-## 📊 4. Dataset Information
-
-**Dataset:** DataCo Supply Chain Dataset
-
-**Format:** CSV
-
-**Total Records:** 180,519
-
-**Raw Storage:** Databricks Volume
-
-**Storage Location:**
-`workspace.default.logistics_raw`
-
-The dataset contains supply chain information covering areas such as:
-
-- Customer orders
-- Product information
-- Sales and profitability
-- Shipping modes
-- Delivery status
-- Delivery risk
-- Regional and country information
-- Order and shipping dates
-
-The dataset is used to analyse supply chain operations and generate business performance indicators.
-
-## 🏗️ 5. System Architecture
-
-The project follows the Medallion Architecture implemented in Databricks.
-
-### Architecture Flow
+The solution uses the following logical flow:
 
 ```text
-             DATACO SUPPLY CHAIN DATASET
-                    CSV FILE
-                       |
-                       ▼
-                DATA INGESTION
-                 Apache Spark
-                       |
-                       ▼
-                RAW DATA STORAGE
-                Databricks Volume
-                       |
-                       ▼
-              ┌───────────────────┐
-              │   BRONZE LAYER   │
-              │   Raw Delta Data │
-              └───────────────────┘
-                       |
-                       ▼
-              ┌───────────────────┐
-              │   SILVER LAYER   │
-              │ Cleaning &       │
-              │ Transformation  │
-              └───────────────────┘
-                       |
-                       ▼
-              ┌───────────────────┐
-              │    GOLD LAYER    │
-              │ Business         │
-              │ Aggregations     │
-              └───────────────────┘
-                       |
-                       ▼
-              ┌───────────────────┐
-              │  DATABRICKS SQL  │
-              │    WAREHOUSE     │
-              └───────────────────┘
-                       |
-                       ▼
-              ┌───────────────────┐
-              │   POWER BI       │
-              │   DirectQuery    │
-              └───────────────────┘
-                       |
-                       ▼
-             INTERACTIVE DASHBOARD
+DataCo Supply Chain CSV
+          |
+          v
+Databricks Volume (raw storage)
+          |
+          v
+Bronze: dataco_supply_chain_raw
+          |
+          v
+Silver: dataco_supply_chain_clean
+          |
+          v
+Gold analytical tables
+  |          |          |          |
+  v          v          v          v
+Logistics  Delivery   Regional   Shipping
+  KPIs    Performance Analysis   Analysis
+          |
+          v
+Databricks SQL Warehouse
+          |
+          v
+Power BI (DirectQuery)
+          |
+          v
+Interactive Analytics Dashboard
 ```
 
-### Medallion Architecture
+See `documentation/Supply_Chain_Architecture.png` for the visual architecture and `documentation/Supply_Chain_Architecture.drawio` for the editable diagram.
 
-| Layer | Purpose | Implementation |
-|---|---|---|
-| Bronze | Stores ingested raw data | Raw Delta Table |
-| Silver | Cleans and transforms data | Cleaned Delta Table |
-| Gold | Generates business analytics | Aggregated Gold Tables |
+## 6. Medallion Architecture and Notebooks
 
-## ⚙️ 6. Data Engineering Pipeline
+### Bronze Layer
+- Notebook: `01_Bronze_Ingestion`
+- Table: `workspace.bronze.dataco_supply_chain_raw`
+- Purpose: ingest and store the source records in Delta format.
+- Audited size: 180,519 rows, 53 columns.
 
-The ETL pipeline is implemented using Databricks notebooks and Databricks Workflows.
+### Silver Layer
+- Notebook: `02_Silver_Transformation`
+- Table: `workspace.silver.dataco_supply_chain_clean`
+- Purpose: remove unnecessary PII columns, parse date fields and cast numeric fields.
+- Audited size: 180,519 rows, 46 columns.
 
-### Step 1: Data Ingestion — Bronze Layer
+### Gold Layer
+- Notebook: `03_Gold_Analytics_New`
+- Schema: `workspace.gold`
+- Purpose: create business-focused aggregated datasets.
 
-The raw CSV dataset is loaded from Databricks Volume storage using Apache Spark.
-
-**Notebook:** `01_Bronze_Ingestion`
-
-**Bronze Table:**
-`workspace.bronze.dataco_supply_chain_raw`
-
-Key operations:
-
-- Read raw CSV data.
-- Apply initial ingestion logic.
-- Store the data in Delta format.
-- Maintain the original source records.
-
-**Bronze Layer Statistics:**
-
-- Records: 180,519
-- Columns: 53
-
-### Step 2: Data Cleaning — Silver Layer
-
-The Bronze data is processed to improve data quality and consistency.
-
-**Notebook:** `02_Silver_Transformation`
-
-**Silver Table:**
-`workspace.silver.dataco_supply_chain_clean`
-
-Key operations:
-
-- Remove unnecessary PII columns.
-- Convert date fields into appropriate date formats.
-- Cast numeric columns into appropriate data types.
-- Prepare structured data for analytical processing.
-- Validate important data quality conditions.
-
-**Silver Layer Statistics:**
-
-- Records: 180,519
-- Columns: 46
-
-### Step 3: Business Analytics — Gold Layer
-
-The Silver data is aggregated into business-oriented analytical tables.
-
-**Notebook:** `03_Gold_Analytics_New`
-
-The Gold layer contains four analytical tables:
-
-| Gold Table | Purpose |
+| Gold table | Purpose |
 |---|---|
-| `gold_logistics_kpis` | Overall logistics KPIs |
-| `gold_delivery_performance` | Delivery status and performance analysis |
-| `gold_regional_analysis` | Country and regional performance |
+| `gold_logistics_kpis` | Overall logistics and business KPIs |
+| `gold_delivery_performance` | Delivery status and shipping-day analysis |
+| `gold_regional_analysis` | Market, region and country analysis |
 | `gold_shipping_analysis` | Shipping mode and profitability analysis |
 
-These tables provide the analytical foundation for the Power BI dashboard.
+## 7. Workflow Orchestration
 
-## 🔄 7. Workflow Orchestration
+**Workflow:** `Logistics_Supply_Chain_ETL`
 
-The project uses Databricks Workflows to organize and execute the ETL pipeline.
+Expected execution sequence:
 
-**Workflow Name:** `Logistics_Supply_Chain_ETL`
+1. Bronze ingestion
+2. Silver transformation
+3. Gold analytics
 
-Pipeline execution:
+The active workflow configuration identified during the project audit uses `03_Gold_Analytics_New`. A duplicate legacy job was also identified; review it before archiving or deleting it.
 
-```text
-Bronze Ingestion
-       |
-       ▼
-Silver Transformation
-       |
-       ▼
-Gold Analytics
-```
+## 8. Key Business Metrics
 
-The workflow coordinates the execution of the data processing notebooks in the required sequence.
-
-## 📈 8. Data Analysis and Business KPIs
-
-The project generates multiple business performance indicators.
-
-### Overall Business Metrics
+Reported aggregate results from the project audit:
 
 | Metric | Result |
 |---|---:|
-| Total Sales | $36,784,735.01 |
-| Total Profit | $3,966,902.97 |
-| Total Order Items | 180,519 |
-| Unique Orders | 65,752 |
-| Cancelled Items | 7,754 |
-| Late Shipment Items | 98,977 |
-| Late Delivery Percentage | 57.29% |
+| Total sales | $36,784,735.01 |
+| Total profit | $3,966,902.97 |
+| Order-item records | 180,519 |
+| Unique orders | 65,752 |
+| Cancelled order items | 7,754 |
+| Non-cancelled order items | 172,765 |
+| Late order items | 98,977 |
+| Late delivery percentage (KPI) | 57.29% |
 
-*Note: The late delivery percentage uses non-cancelled order items as its denominator.*
+The 57.29% KPI is calculated as late order items divided by non-cancelled order items. Confirm denominator consistency across all Gold tables before comparing regional and shipping percentages.
 
-### Key Analytical Areas
+**Metric definition note:** Some aggregate fields named `total_shipments` count order-item rows rather than unique shipments or orders. Interpret these as order-item counts unless the definition is changed and validated.
 
-**1. Sales and Profit Analysis**
-- Overall sales performance.
-- Profitability analysis.
-- Regional sales contribution.
+## 9. Power BI Dashboard
 
-**2. Delivery Performance**
-- Delivery status distribution.
-- Late delivery analysis.
-- Actual versus scheduled shipping days.
+Power BI connects to Databricks SQL Warehouse through DirectQuery and contains four analytical areas:
 
-**3. Regional Analysis**
-- Country-wise sales performance.
-- Regional delivery performance.
-- Late shipment comparison.
+- **Executive Overview:** total sales, profit, unique orders, order items, cancellations, late items and late-delivery percentage.
+- **Delivery Performance:** delivery status distribution, actual versus scheduled shipping days and delivery-status counts.
+- **Regional Performance:** top countries by sales, late delivery percentage by region and regional performance table.
+- **Shipping Analysis:** shipment/order-item counts by shipping mode, late delivery percentage by mode and profit by mode.
 
-**4. Shipping Analysis**
-- Shipping mode distribution.
-- Shipping mode performance.
-- Profit comparison across shipping modes.
+Available report filters include market, order region, order country and shipping mode.
 
-## 📊 9. Power BI Dashboard
+## 10. Data Quality and Validation
 
-Microsoft Power BI is used to create the final interactive business intelligence dashboard.
+The technical audit reported:
+- Bronze and Silver row counts reconciled at 180,519.
+- All 180,519 `order_item_id` values were unique in the audited data.
+- No nulls were reported in the audited sales and profit fields.
+- No shipping-before-ordering dates were reported.
+- The delivery-risk indicator matched late delivery status in the audited records.
+- Gold totals were reconciled against Silver.
 
-The dashboard connects to Databricks SQL Warehouse using DirectQuery.
+Audit follow-ups included standardizing late-delivery percentage denominators, excluding cancelled records from shipping-day averages, adding explicit cast-null validation gates and considering minimum sample thresholds for regional rates. Re-run validations after any notebook changes.
 
-### Dashboard Sections
-
-**1. Executive Overview**
-- Total Sales
-- Total Profit
-- Unique Orders
-- Total Order Items
-- Cancelled Shipments
-- Late Shipments
-- Late Delivery Percentage
-
-**2. Delivery Performance**
-- Delivery Status Distribution
-- Actual vs Scheduled Shipping Days
-- Shipment Count by Delivery Status
-
-**3. Regional Performance**
-- Top 10 Countries by Sales
-- Late Delivery Percentage by Region
-- Regional Shipment Performance
-
-**4. Shipping Analysis**
-- Shipments by Shipping Mode
-- Late Delivery Percentage by Shipping Mode
-- Profit by Shipping Mode
-
-### Dashboard Features
-
-- Interactive business intelligence visualizations.
-- Market-level filtering.
-- Regional filtering.
-- Country-level filtering.
-- Shipping mode filtering.
-- Dynamic KPI analysis.
-
-## 🛠️ 10. Technology Stack
+## 11. Technology Stack
 
 | Technology | Usage |
 |---|---|
-| Python | Programming language |
+| Python / PySpark | Data processing and transformation |
 | Apache Spark | Distributed data processing |
-| PySpark | Data transformation |
-| Databricks | Data engineering platform |
+| Databricks | Data engineering workspace |
 | Delta Lake | Structured data storage |
-| Databricks Volumes | Raw data storage |
+| Databricks Volumes | Raw CSV storage |
 | Databricks Workflows | ETL orchestration |
-| Databricks SQL | Analytical data access |
-| Microsoft Power BI | Interactive dashboards |
-| Git | Version control |
-| GitHub | Project hosting |
+| Databricks SQL Warehouse | Analytical data access |
+| Microsoft Power BI | Dashboard and reporting |
+| Git and GitHub | Version control and project hosting |
 
-## 📁 11. Project Structure
-
-The following structure represents the recommended GitHub organization for this project. Adjust the paths to match the actual files in your workspace.
+## 12. Repository Structure
 
 ```text
 Supply-Chain-Logistics-Analytics/
-│
 ├── notebooks/
 │   ├── 01_Bronze_Ingestion
 │   ├── 02_Silver_Transformation
 │   └── 03_Gold_Analytics_New
-│
-├── data/
-│   └── README.md
-│
 ├── dashboard/
-│   ├── Supply_Chain_Logistics_Analytics.pbix
-│   └── Supply_Chain_Architecture.png
-│
+│   └── Supply_Chain_Logistics_Analytics.pbix
 ├── documentation/
-│   ├── architecture.md
+│   ├── Supply_Chain_Architecture.png
 │   ├── Supply_Chain_Architecture.drawio
-│   └── Project_Report.pdf
-│
+│   ├── Supply_Chain_Logistics_Analytics_Project_Report.pdf
+│   └── Supply_Chain_Logistics_Analytics_Presentation.pptx
 ├── README.md
-│
 └── .gitignore
 ```
 
-## 🚀 12. Implementation and Execution
+This is the intended organization. Update names and paths to match the files actually included in the repository.
 
-### Prerequisites
+## 13. Setup and Execution
 
-- Databricks workspace.
-- Apache Spark / PySpark.
-- Access to Databricks Volumes.
-- Databricks SQL Warehouse.
-- Microsoft Power BI Desktop.
-- Git and GitHub account.
+1. Upload the dataset to a Databricks Volume.
+2. Run `01_Bronze_Ingestion`.
+3. Run `02_Silver_Transformation`.
+4. Run `03_Gold_Analytics_New`.
+5. Verify the four Gold tables in `workspace.gold`.
+6. Run the `Logistics_Supply_Chain_ETL` workflow.
+7. Connect Power BI Desktop to the Databricks SQL Warehouse.
+8. Load the Gold tables using DirectQuery and open the report.
 
-### Implementation Steps
+Exact notebook paths, warehouse settings and credentials depend on the Databricks workspace. Never commit credentials, access tokens or `.env` files.
 
-1. Upload the DataCo Supply Chain CSV dataset to Databricks Volume storage.
-2. Execute the Bronze ingestion notebook.
-3. Execute the Silver transformation notebook.
-4. Execute the Gold analytics notebook.
-5. Configure and run the Databricks ETL workflow.
-6. Verify the Gold analytical tables.
-7. Connect Power BI to Databricks SQL Warehouse.
-8. Import the Gold tables using DirectQuery.
-9. Develop and save the Power BI dashboard.
+## 14. Business Value
 
-*Note: The exact notebook paths and connection settings depend on your Databricks workspace configuration.*
+The solution provides a consolidated view of sales, profitability, delivery outcomes, regional performance and shipping modes. These insights can help stakeholders investigate operational bottlenecks and support data-informed supply chain decisions.
 
-## 🔍 13. Data Quality and Validation
+## 15. Future Enhancements
 
-The project includes data validation checks performed during development and auditing.
+- Automated ingestion from a verified external source or API.
+- Scheduled ETL runs and workflow notifications.
+- Stronger automated data-quality assertions and failure gates.
+- Delivery-delay prediction and demand forecasting.
+- Inventory optimization and enhanced time-series reporting.
 
-Key validation results:
+## 16. Author and Academic Context
 
-- Bronze and Silver row counts reconciled.
-- Unique `order_item_id` values verified.
-- No duplicate order-item records found during the audit.
-- Sales and profit fields checked for null values.
-- Shipping dates checked against order dates.
-- Delivery risk consistency checked against delivery status.
-- Gold analytical totals reconciled with Silver data.
+- **Project:** Supply Chain & Logistics Analytics
+- **Programme:** B.Tech – Computer Science & Engineering (AI & ML)
+- **Institution:** K.R. Mangalam University
+- **Domain:** Data Engineering and Business Intelligence
 
-These checks help improve the reliability of the analytical outputs.
+## 17. References
 
-## 💡 14. Business Value
+- [Databricks Documentation](https://docs.databricks.com/)
+- [Apache Spark Documentation](https://spark.apache.org/docs/latest/)
+- [Delta Lake Documentation](https://docs.delta.io/)
+- [Microsoft Power BI Documentation](https://learn.microsoft.com/power-bi/)
 
-This project demonstrates how data engineering and business intelligence can support supply chain decision-making.
-
-Potential business benefits include:
-
-- Better visibility into delivery performance.
-- Identification of regions with higher late-delivery rates.
-- Improved understanding of shipping mode performance.
-- Analysis of sales and profitability.
-- Identification of operational bottlenecks.
-- Data-driven supply chain planning.
-
-## 🔮 15. Future Enhancements
-
-Possible future improvements include:
-
-- Automated data ingestion from external APIs.
-- Scheduled ETL pipeline execution.
-- Advanced delivery delay prediction using Machine Learning.
-- Demand forecasting.
-- Inventory optimization.
-- Real-time shipment monitoring.
-- Automated data quality alerts.
-- Enhanced business intelligence reporting.
-
-## 👨‍💻 16. Author
-
-**Project:** Supply Chain & Logistics Analytics
-
-**Domain:** Data Engineering and Business Intelligence
-
-**Technologies:** Databricks | Apache Spark | PySpark | Delta Lake | Power BI
-
----
-
-## 📄 17. License
-
-This project is developed for educational and academic purposes.
-
-Dataset usage and redistribution are subject to the original dataset's licensing and usage conditions.
+The original DataCo dataset source and license should be cited using the verified publication/download page.

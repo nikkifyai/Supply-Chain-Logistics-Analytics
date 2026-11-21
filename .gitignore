@@ -1,4 +1,4 @@
-# Environment variables and secrets
+# Secrets and environment files
 .env
 .env.*
 !.env.example
@@ -6,7 +6,7 @@
 *.key
 secrets/
 
-# Python cache
+# Python cache and bytecode
 __pycache__/
 *.py[cod]
 *.pyo
@@ -36,12 +36,7 @@ desktop.ini
 tmp/
 temp/
 
-# Large raw datasets
-data/raw/
-datasets/
-*.csv
-
-# Python testing and coverage
+# Python tests and coverage
 .pytest_cache/
 .coverage
 htmlcov/
@@ -51,7 +46,12 @@ build/
 dist/
 *.egg-info/
 
-# Local database files
+# Local databases
 *.db
 *.sqlite
 *.sqlite3
+
+# Raw / large datasets (do not commit source data files)
+data/raw/
+datasets/
+*.csv
